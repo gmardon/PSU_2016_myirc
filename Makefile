@@ -4,14 +4,15 @@ NAME_CLIENT			=		client
 
 SRC_COMMON			= 		src/my_malloc.c			\
 							src/my_error.c			\
+							src/my_select.c			\
 							src/get_next_line.c
 
 SRC_SERVER			=		src/server/server.c		\
-							src/my_select.c			\
+							src/server/main.c		\
+							src/server/server_handler.c \
 							$(SRC_COMMON)
 
 SRC_CLIENT			=		src/client/client.c		\
-							src/select.c			\
 							$(SRC_COMMON)
 
 OBJ_SERVER			=		$(SRC_SERVER:.c=.o)

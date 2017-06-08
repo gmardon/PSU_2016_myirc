@@ -1,28 +1,13 @@
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <poll.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
 #include "server.h"
 
 #  define closesocket(s) close(s)
 
-typedef int SOCKET;
 typedef struct	sockaddr_in SOCKADDR_IN;
 
 typedef struct	sockaddr SOCKADDR;
 
-typedef struct	s_server
-{
-  SOCKET                sock;
-  char			*channel;
-  char			*username;
-}		t_server;
-
 #define MAX_CHANNELS 3
-
+/*
 void			exec_nick_cmd(char *name, t_server *cur)
 {
   cur->username = strdup(name);
@@ -145,12 +130,25 @@ void			exec_send_file(char *name, char *file, t_server *cl)
   write(cl[i].sock, file, strlen(file));
 }
 
-void			exec_cmd(char *cmd, t_server *cl, t_server *cur, char *channels)
+void			handle_command(char *query, t_server *server, t_server *cur, char *channels)
 {
+  char command;
+
+  command = strsep(strdup(cmd), " ");
+  while (commands[index].cmd) {
+        if (strcmp(commands[index].cmd, *command) == 0) {
+            (commands[index].handler)(command + 1, server);
+            handled++;
+        }
+        index++;
+    }
+  /*
+
+  
   char			*dup;
 
   dup = strdup(cmd);
-  dup = strsep(&dup, " ");
+  dup = 
   if (!strcmp(dup, "/nick"))
     exec_nick_cmd(strsep(&dup, " "), &*cur);
   else if (!strcmp(dup, "/list"))
@@ -174,7 +172,7 @@ void			exec_cmd(char *cmd, t_server *cl, t_server *cur, char *channels)
   else
     exec_send_cmd(cmd, cl, *cur);
 }
-
+/*
 int			strlen_t_server(t_server *cl)
 {
   int			i;
@@ -193,6 +191,8 @@ int			find_socket(t_server *cl, SOCKET sock)
   return (i);
 }
 
+*/
+/*
 char			*set_channels()
 {
   char			*tmp;
@@ -215,80 +215,67 @@ char			*set_channels()
   free(tmp);
   return (channels);
 }
+*/
+/*
 
-t_server		*init_server()
-{
-  t_server		*cl;
-  int			i;
-
-  i = -1;
-  if (!(cl = malloc(sizeof(t_server) * 5)))
-    return (NULL);
-  while (++i <= 4)
-    {
-      cl[i].sock = -1;
-      cl[i].channel = NULL;
-      cl[i].username = NULL;
-    }
-  return (cl);
-}
 
 void			server(int port)
 {
-  t_server		sv;
-  t_server		*cl;
+  t_server		*server;
   SOCKADDR_IN           csin;
   SOCKADDR_IN           sin;
   SOCKET		nsock;
   socklen_t		recsize;
   int			i;
-  struct pollfd		pl[5];
-  char			msg[1000];
-  char			*channels;
+  //struct pollfd		pl[5];
+  struct pollfd fd_queue[32];
+  char query[1000];
+  char *channels;
 
-  channels = set_channels();
+  //channels = set_channels();
   cl = init_server();
   recsize = sizeof(csin);
-  memset((char *)msg, 0, 1000);
-  sv.sock = socket(AF_INET, SOCK_STREAM, 0);
+  memset((char *)query, 0, BUFFER_SIZE);
+  server.sock = socket(AF_INET, SOCK_STREAM, 0);
   sin.sin_addr.s_addr = htonl(INADDR_ANY);
   sin.sin_family = AF_INET;
   sin.sin_port = htons(port);
-  bind(sv.sock, (SOCKADDR*)&sin, sizeof(sin));
-  listen(sv.sock, 3);
-  pl[0].fd = sv.sock;
+  bind(server.sock, (SOCKADDR*)&sin, sizeof(sin));
+  listen(server.sock, 256);
+  pl[0].fd = server.sock;
   pl[0].events = POLLIN;
-  while (44)
+  while (TRUE)
     {
       poll(pl, strlen_t_server(cl) + 1, -1);
-      if (pl[0].revents == POLLIN)
-	{
-	  if ((nsock = accept(sv.sock, (SOCKADDR*)&csin, (socklen_t*)&recsize)) < 0)
-	    return;
-	  for (i = 0; i < 3; i++)
-	    {
-	      if (!cl[i].sock)
-		{
-		  cl[i].sock = nsock;
-		  break;
-		}
-	    }
-	  for (i = 1; cl[i].sock != -1; i++)
-	    {
-	      if (pl[i].revents == 0)
-		continue;
-	      read(cl[find_socket(cl, pl[i].fd)].sock, msg, 1000);
-	      exec_cmd(msg, cl, &cl[find_socket(cl, pl[i].fd)], channels);
-	    }
-	}
+      if (pl[0].revents & POLLIN)
+      {
+        if ((nsock = accept(server.sock, (SOCKADDR*)&csin, (socklen_t*)&recsize)) < 0)
+          return;
+        for (i = 0; i < 3; i++)
+          {
+            if (!cl[i].sock)
+            {
+              cl[i].sock = nsock;
+              break;
+            }
+          }
+        for (i = 1; server->users[i].sock != -1; i++)
+          {
+            if (pl[i].revents == 0)
+              continue;
+            read(cl[find_socket(cl, pl[i].fd)].sock, query, BUFFER_SIZE);
+            handle_command(query, cl, &cl[find_socket(cl, pl[i].fd)], channels);
+          }
+       }
     }
 }
 
-int			main(int ac, char **av)
+*/
+
+t_server		*init_server()
 {
-  if (ac != 2)
-    my_error("Usage : ./server [port]", 0);
-  if (!(init_server(atoi(av[1]))))
-    return (84);
-  return (0);
+  t_server *server;
+  
+  server = my_malloc(sizeof(t_server));
+  handle_server(server);
 }

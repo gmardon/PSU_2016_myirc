@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #define BUFFER_SIZE 2048
+#define TRUE 1
 void my_error(char *content, int opt);
 /*
 typedef struct			s_socket

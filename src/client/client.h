@@ -16,6 +16,6 @@ typedef struct			s_client
   char				connected;
   char				*channel;
   char				*nickname;
-  t_socket			*sock;
+  //t_socket			*sock;
 }				t_client;
 #endif
