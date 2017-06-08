@@ -23,35 +23,6 @@ typedef struct	s_server
 
 #define MAX_CHANNELS 3
 
-char    *my_strcat(char *dest, char *src)
-{
-  char  *res;
-  int   i;
-  int   j;
-  int   write;
-
-  if (dest == NULL)
-    return (src);
-  if (src == NULL)
-    return (dest);
-  j = i = 0;
-  while (dest[i])
-    i++;
-  while (src[j])
-    j++;
-  if ((res = malloc(sizeof(char) * ((i + j + 1) * 100))) == NULL)
-    return (NULL);
-  i = -1;
-  write = 0;
-  while (dest[++i])
-    res[write++] = dest[i];
-  i = -1;
-  while (src[++i])
-    res[write++] = src[i];
-  res[write] = '\0';
-  return (res);
-}
-
 void			exec_nick_cmd(char *name, t_server *cur)
 {
   cur->username = strdup(name);
@@ -90,8 +61,8 @@ void			exec_users_cmd(t_server *cl, t_server cur)
   user = memset(user, 0, 1000);
   while (cl[++i].sock != -1)
     {
-      user = my_strcat(user, cl[i].username);
-      user = my_strcat(user, "\n");
+      user = strcat(user, cl[i].username);
+      user = strcat(user, "\n");
     }
   write(cur.sock, user, strlen(user));
   free(user);
@@ -113,8 +84,8 @@ void			exec_names_cmd(char *channel, t_server *cl, t_server cur)
     {
       if (strcmp(cl[i].channel, dup))
 	continue;
-      user = my_strcat(user, cl[i].username);
-      user = my_strcat(user, "\n");
+      user = strcat(user, cl[i].username);
+      user = strcat(user, "\n");
     }
   write(cur.sock, user, strlen(user));
   free(user);

@@ -2,7 +2,6 @@
 #define _MY_IRC_H_
 #include <stdlib.h>
 #include <stdio.h>
-#define NULL 0
 #define BUFFER_SIZE 2048
 void my_error(char *content, int opt);
 /*
