@@ -10,12 +10,15 @@
 #include <unistd.h>
 #include <string.h>
 #define MAX_CONNECTION 256
+#define RB_SIZE 4096
 
 typedef int SOCKET;
 
 typedef struct	s_user
 {
-  struct pollfd poll;
+    SOCKET sock;
+    t_buffer *buffer;
+    char *nickname;
 }		t_user;
 
 typedef struct s_channel
@@ -40,5 +43,5 @@ typedef struct s_command
 }				t_command;
 
 void handle_server(t_server *server);
-t_server *init_server();
+t_server *init_server(int port);
 #endif
