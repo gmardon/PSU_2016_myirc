@@ -1,7 +1,11 @@
 #ifndef _MY_IRC_H_
-#define _MY_IRC_H_
+#define _MY_IRC_H_ 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #define BUFFER_SIZE 2048
 #define TRUE 1
 
@@ -28,12 +32,5 @@ void buffer_delete_last(t_buffer *);
 
 
 void my_error(char *content, int opt);
-/*
-typedef struct			s_socket
-{
-  int				fd;
-  stor				addr;
-  socklen_t			len;
-}				t_socket;
-*/
+int create_server(int port);
 #endif

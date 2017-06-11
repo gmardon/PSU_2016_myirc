@@ -277,7 +277,7 @@ t_server		*init_server(int port)
   t_server *server;
   
   server = my_malloc(sizeof(t_server));
-  server->sock = bind_port(port);
+  server->sock = create_server(port);
   FD_ZERO(&server->master);
   FD_SET(server->sock, &server->master);
   handle_server(server);

@@ -1,6 +1,6 @@
 #include "server.h"
 
-void handle_command()
+void handle_command(t_user *user, t_server *serv)
 {
 
 }
@@ -39,28 +39,27 @@ void handle_new_connection(int *max, t_server *server)
   //  user_push(user, &serv->users_alone);
 }
 
-void		handle_io_connection(t_user *user, t_server *serv)
+void		handle_io_connection(t_user *user, t_server *server)
 {
-  char tmp[RB_SIZE];
+  printf("handle io connection\n");
+  char tmp[BUFFER_SIZE];
   int rc;
 
-  memset(tmp, 0, RB_SIZE);
+  memset(tmp, 0, BUFFER_SIZE);
   if ((rc = recv(user->sock, tmp, buffer_available(user->buffer), 0)) > 0)
     {
         printf("recv\n");
-     // rb_write(user->rb, tmp);
-     // if (rb_at(user->rb, -1) == '\n' && rb_at(user->rb, -2) == '\r')
-	//input_interpret(user, serv);
+        buffer_write(user->buffer, tmp);
+        if (buffer_at(user->buffer, -1) == '\n' && buffer_at(user->buffer, -2) == '\r')
+          handle_command(user, server);
     }
   else
     {
       if (rc == 0)
-//	printf("%s Disconnected\n", (user->nick)
-//	       ? user->nick : user->ip);
-        printf("Disconnected");
+	      printf("%s Disconnected\n", (user->nickname) ? user->nickname : "");
       else
       	perror("recv");
-      FD_CLR(user->sock, &serv->master);
+      FD_CLR(user->sock, &server->master);
       //remove_connection(user, serv);
     }
 }
